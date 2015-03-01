@@ -1,0 +1,105 @@
+#usage "Creates a Parts List for a Board as a Text File"
+#require 7.00
+
+enum {
+    ID_TEXT_LENGTH = 2,
+    LEFT_PADDING = 1,
+    RIGHT_PADDING = 1
+};
+
+int maximum_character_count_id = 0;
+int maximum_character_count_description = 0;
+int maximum_character_count_manufacturer = 0;
+int maximum_character_count_part_number = 0;
+
+int current_character_count = 0;
+
+board(B) {
+    B.elements(E) {
+        if (strlen(E.name) > maximum_character_count_id) {
+            maximum_character_count_id = strlen(E.name);
+        }
+        if (strlen(E.attribute["DESCRIPTION"]) > maximum_character_count_description) {
+            maximum_character_count_description = strlen(E.attribute["DESCRIPTION"]);
+        }
+        if (strlen(E.attribute["MANUFACTURER"]) > maximum_character_count_manufacturer) {
+            maximum_character_count_manufacturer = strlen(E.attribute["MANUFACTURER"]);
+        }
+        if (strlen(E.attribute["PART_NUMBER"]) > maximum_character_count_part_number) {
+            maximum_character_count_part_number = strlen(E.attribute["PART_NUMBER"]);
+        }
+    }
+}
+
+void print_row_border() {
+    int i = 0;
+    printf("+");
+    for (i = 0; i < maximum_character_count_id + LEFT_PADDING + RIGHT_PADDING; i++) {
+        printf("-");
+    }
+    printf("+");
+    for (i = 0; i < maximum_character_count_description + LEFT_PADDING + RIGHT_PADDING; i++) {
+        printf("-");
+    }
+    printf("+");
+    for (i = 0; i < maximum_character_count_manufacturer + LEFT_PADDING + RIGHT_PADDING; i++) {
+        printf("-");
+    }
+    printf("+");
+    for (i = 0; i < maximum_character_count_part_number + LEFT_PADDING + RIGHT_PADDING; i++) {
+        printf("-");
+    }
+    printf("+");
+    printf("\n");
+}
+
+void print_column_text(string column_text, int maximum_character_count) {
+    int i = 0;
+    int column_text_length = strlen(column_text);
+    for (i = 0; i < LEFT_PADDING; i++) {
+        printf(" ");
+    }
+    printf("%s", column_text);
+    for (i = 0; i < (maximum_character_count - column_text_length) + RIGHT_PADDING; i++) {
+        printf(" ");
+    }
+}
+
+void print_table_header() {
+    print_row_border();
+    printf("|");
+    print_column_text("ID", maximum_character_count_id);
+    printf("|");
+    print_column_text("DESCRIPTION", maximum_character_count_description);
+    printf("|");
+    print_column_text("MANUFACTURER", maximum_character_count_manufacturer);
+    printf("|");
+    print_column_text("PART NUMBER", maximum_character_count_part_number);
+    printf("|");
+    printf("\n");
+    print_row_border();
+}
+
+void print_parts() {
+    board(B) {
+        B.elements(E) {
+            printf("|");
+            print_column_text(E.name, maximum_character_count_id);
+            printf("|");
+            print_column_text(E.attribute["DESCRIPTION"], maximum_character_count_description);
+            printf("|");
+            print_column_text(E.attribute["MANUFACTURER"], maximum_character_count_manufacturer);
+            printf("|");
+            print_column_text(E.attribute["PART_NUMBER"], maximum_character_count_part_number);
+            printf("|");
+            printf("\n");
+        }
+    }
+}
+
+output("test.txt", "wt") {
+    print_table_header();
+    print_parts();
+    print_row_border();
+}
+
