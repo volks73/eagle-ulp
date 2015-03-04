@@ -1,0 +1,32 @@
+#usage "Creates the 'LINK' attribute from an attribute suffixed with 'URL'"
+#require 7.00
+
+string script_path = EAGLE_HOME + "\\" + "create-link-from-url.scr";
+
+output(script_path) {
+    library(L) {
+        L.devicesets(DS) {
+            printf("EDIT %s.dev\n", DS.name);
+            DS.devices(D) {
+                printf("PACKAGE %s\n", D.name);
+                string t[];
+                int n = strsplit(t, D.technologies, ' ');
+                for (int i = 0; i < n; i++) {
+                    printf("TECHNOLOGY %s\n", t[i]);
+                    D.attributes(A, t[i]) {
+                        if (A.name == "DOCUMENTATION_URL") {
+                            printf("ATTRIBUTE DOCUMENTATION_LINK '<a href=\"%s\">Datasheet</a>' constant\n", A.value);
+                        } else if (A.name == "SUPPLIER_URL") {
+                            printf("ATTRIBUTE SUPPLIER_LINK '<a href=\"%s\">Home Page</a>' constant\n", A.value);
+                        } else if (A.name == "SUPPLIER_ITEM_URL") {
+                            printf("ATTRIBUTE SUPPLIER_ITEM_LINK '<a href=\"%s\">Details</a>' constant\n", A.value);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    printf("WRITE;\n");
+    exit("SCRIPT " + script_path);
+}

@@ -1,0 +1,42 @@
+#usage "Sets the SUPPLIER_LINK, SUPPLIER_NAME, and SUPPLIER_URL attribute values to Digi-Key-related values"
+#require 7.00
+
+enum {
+    ATTRIBUTE_NAMES_COUNT = 3
+};
+
+string attribute_names[] = {
+    "SUPPLIER_LINK",
+    "SUPPLIER_NAME",
+    "SUPPLIER_URL"
+};
+
+string attribute_values[] = {
+    "<a href=\"http://www.digikey.com\">Home Page</a>",
+    "Digi-Key",
+    "http://www.digikey.com"
+};
+
+string script_path = EAGLE_HOME + "\\" + "set-supplier-to-digikey.scr";
+
+output(script_path) {
+    library(L) {
+        L.devicesets(DS) {
+            printf("EDIT %s.dev\n", DS.name);
+            DS.devices(D) {
+                printf("PACKAGE %s\n", D.name);
+                string t[];
+                int n = strsplit(t, D.technologies, ' ');
+                for (int i = 0; i < n; i++) {
+                    printf("TECHNOLOGY %s\n", t[i]);
+                    for (int j = 0; j < ATTRIBUTE_NAMES_COUNT; j++) {
+                       printf("ATTRIBUTE %s '%s' %s\n", attribute_names[j], attribute_values[j], "constant");
+                    }
+                }
+            }
+        }
+    }
+
+    printf("WRITE;\n");
+    exit("SCRIPT " + script_path);
+}

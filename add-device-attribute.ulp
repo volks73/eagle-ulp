@@ -1,0 +1,41 @@
+#usage "Adds an ATTRIBUTEs used by Volks73's ULPs to every device in a library"
+#require 7.00
+
+enum {
+    ATTRIBUTE_NAMES_COUNT = 8
+};
+
+string attribute_names[] = {
+    "DOCUMENTATION_LINK",
+    "DOCUMENTATION_URL",
+    "SUPPLIER_ITEM_LINK",
+    "SUPPLIER_ITEM_NUMBER",
+    "SUPPLIER_ITEM_URL",
+    "SUPPLIER_LINK",
+    "SUPPLIER_NAME",
+    "SUPPLIER_URL"
+};
+
+string script_path = EAGLE_HOME + "\\" + "add-attributes.scr";
+
+output(script_path) {
+    library(L) {
+        L.devicesets(DS) {
+            printf("EDIT %s.dev\n", DS.name);
+            DS.devices(D) {
+                printf("PACKAGE %s\n", D.name);
+                string t[];
+                int n = strsplit(t, D.technologies, ' ');
+                for (int i = 0; i < n; i++) {
+                    printf("TECHNOLOGY %s\n", t[i]);
+                    for (int j = 0; j < ATTRIBUTE_NAMES_COUNT; j++) {
+                       printf("ATTRIBUTE %s %s\n", attribute_names[j], "constant");
+                    }
+                }
+            }
+        }
+    }
+
+    printf("WRITE;\n");
+    exit("SCRIPT " + script_path);
+}

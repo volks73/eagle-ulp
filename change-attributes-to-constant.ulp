@@ -1,0 +1,26 @@
+#usage "Changes all device attributes to constants"
+#require 7.00
+
+string script_path = EAGLE_HOME + "\\" + "change-attributes-to-constant.scr";
+
+output(script_path) {
+    library(L) {
+        L.devicesets(DS) {
+            printf("EDIT %s.dev\n", DS.name);
+            DS.devices(D) {
+                printf("PACKAGE %s\n", D.name);
+                string t[];
+                int n = strsplit(t, D.technologies, ' ');
+                for (int i = 0; i < n; i++) {
+                    printf("TECHNOLOGY %s\n", t[i]);
+                    D.attributes(A, t[i]) {
+                        printf("ATTRIBUTE %s constant\n", A.name);
+                    }
+                }
+            }
+        }
+    }
+
+    printf("WRITE;\n");
+    exit("SCRIPT " + script_path);
+}
