@@ -1,0 +1,66 @@
+#usage "Creates a Bill-of-Materials (BOM) as a HTML file"
+#require 7.00
+
+int unique_parts_count = 0;
+string descriptions[];
+string manufacturers[];
+string documentation_urls[];
+string part_numbers[];
+string supplier_urls[];
+string supplier_names[];
+string supplier_item_urls[];
+string supplier_item_numbers[];
+int quanitities[];
+
+board(B) {
+    B.elements(E) {
+        int is_duplicate = 0;
+        for (int i = 0; i < unique_parts_count; i++) {
+            if (part_numbers[i] == E.attribute["PART_NUMBER"] && E.attribute["PART_NUMBER"] != "") {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (is_duplicate) {
+            quanitities[i] = quanitities[i] + 1;
+        } else if (E.attribute["PART_NUMBER"] != "") {
+            descriptions[i] = E.attribute["DESCRIPTION"];
+            manufacturers[i] = E.attribute["MANUFACTURER"];
+            documentation_urls[i] = E.attribute["DOCUMENTATION_URL"];
+            part_numbers[i] = E.attribute["PART_NUMBER"];
+            supplier_urls[i] = E.attribute["SUPPLIER_URL"];
+            supplier_names[i] = E.attribute["SUPPLIER_NAME"];
+            supplier_item_urls[i] = E.attribute["SUPPLIER_ITEM_URL"];
+            supplier_item_numbers[i] = E.attribute["SUPPLIER_ITEM_NUMBER"];
+            quanitities[i] = 1;
+            unique_parts_count = unique_parts_count + 1;
+        }
+    }
+}
+
+output("Bill-of-Materials.html", "wt") {
+    printf("<!DOCTYPE html>\n");
+    printf("<html>\n");
+    printf("<head>\n");
+    board(B) {
+        printf("<title>Bill-of-Materials (BOM) for %s</title>\n", B.name);
+    }
+    printf("</head>\n");
+    printf("<body>\n");
+    printf("<table>\n");
+    printf("<tr><th>DESCRIPTION</th><th>MANUFACTURER</th><th>PART NUMBER</th><th>SUPPLIER</th><th>SUPPLIER ITEM NUMBER</th><th>QUANTITY</th></tr>\n");
+    for (int i = 0; i < unique_parts_count; i++) {
+        printf("<tr>");
+        printf("<td>%s</td>", descriptions[i]);
+        printf("<td>%s</td>", manufacturers[i]);
+        printf("<td><a href=\"%s\">%s</a></td>", documentation_urls[i], part_numbers[i]);
+        printf("<td><a href=\"%s\">%s</a></td>", supplier_urls[i], supplier_names[i]);
+        printf("<td><a href=\"%s\">%s</a></td>", supplier_item_urls[i], supplier_item_numbers[i]);
+        printf("<td>%u</td>", quanitities[i]);
+        printf("</tr>\n");
+    }
+    printf("</table>\n");
+    printf("</body>\n");
+    printf("</html>\n");
+}
+

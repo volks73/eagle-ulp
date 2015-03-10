@@ -97,7 +97,7 @@ void print_parts() {
     }
 }
 
-output("test.txt", "wt") {
+output("Parts-List.txt", "wt") {
     print_table_header();
     print_parts();
     print_row_border();
