@@ -11,6 +11,17 @@ string supplier_names[];
 string supplier_item_urls[];
 string supplier_item_numbers[];
 int quantities[];
+int board_count = 5;
+
+int result = dlgDialog("Board Quantity") {
+    dlgHBoxLayout {
+        dlgLabel("Number of Boards:");
+        dlgIntEdit(board_count, 1, 2147483647);
+    };
+    dlgPushButton("-&DONE") {
+        dlgAccept();
+    };
+};
 
 board(B) {
     B.elements(E) {
@@ -40,7 +51,8 @@ board(B) {
 
 // Update quantities for number of boards to populate and extras to have on hand 
 for (int i = 0; i < unique_parts_count; i++) {
-    quantities[i] = quantities[i] * 5; // Number of Boards, default is 5 for Advanced Circuits $33/$66 each deal
+    quantities[i] = quantities[i] * board_count;
+    quantities[i] = quantities[i] + (5 - (quantities[i] % 5)); // Increase to the nearest 5 value
 }
 
 output("DigiKey-Shopping-Cart.csv", "wt") {
