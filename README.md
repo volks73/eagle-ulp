@@ -3,6 +3,8 @@ EAGLE ULP Scripts
 
 Public EAGLE ULP scripts for Eagle 6.0+
 
+These scripts are useful for most EAGLE libraries and parts, but they are intended to work with [Volks73's EAGLE Parts Libraries](https://github.com/volks73/eagle-libraries).
+
 Licensing
 ---------
 
