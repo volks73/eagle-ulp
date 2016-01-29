@@ -1,0 +1,6 @@
+TODO List for Volks73's ULP library
+
+- Add support for IC sockets to parts-list.ulp
+- Add support for IC sockets to bill-of-material.ulp
+- Add support for IC sockets to shopping-cart.ulp
+- Add support for multiple supplier output csv files to shopping-cart.ulp
